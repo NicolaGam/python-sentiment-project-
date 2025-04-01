@@ -9,7 +9,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from urllib.parse import urlparse
 from wordcloud import STOPWORDS
-import contractions
+#import contractions
 import sqlite3
 sys.path.append(os.path.abspath('..'))  # Adds the parent directory to sys.path
 from src import config
@@ -45,7 +45,7 @@ def preprocess_data():
         words = [word for word in words if not word.startswith('@')]
 
         # Expand contractions (e.g., "can't" -> "cannot")
-        words = [contractions.fix(word) for word in words]
+        #words = [contractions.fix(word) for word in words]
 
         # Remove punctuation & special characters (keep emojis)
         words = [word for word in words if word not in string.punctuation]

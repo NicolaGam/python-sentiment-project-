@@ -8,11 +8,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import os
 import sys
+import pickle
 sys.path.append(os.path.abspath('..'))  # Adds the parent directory to sys.path
 
 import logging
-# Set up logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def load_data():
@@ -26,7 +25,7 @@ def load_data():
 
 def train_model(grid_search=False):
     """Trains a Random Forest model with GridSearchCV and saves evaluation metrics to CSV."""
-    df = load_data()
+    df = load_data().head(40000) #ho aggiunto head per prendere solo prime 100 osservazioni e non dataset completo 
 
     # Save original indices before vectorization
     df_indices = df.index
@@ -35,6 +34,9 @@ def train_model(grid_search=False):
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['cleaned_text'])
     y = df['sentiment']
+
+    with open(f"{config.MODELS_PATH}vectorizer.pickle","wb") as f:
+        pickle.dump(vectorizer,f)
 
     # Train-test split (preserve indices)
     X_train, X_test, y_train, y_test, train_idx, test_idx = train_test_split(
@@ -59,6 +61,11 @@ def train_model(grid_search=False):
         rf = RandomForestClassifier()
         rf.fit(X_train, y_train)
         y_pred = rf.predict(X_test)
+
+    logging.info("saving model")
+    with open(os.path.join(config.MODELS_PATH, "random_forest.pickle"),"wb") as file:
+        pickle.dump(rf, file)
+
 
     # Create a DataFrame for the test set with predictions
     test_df = df.loc[test_idx].copy()  # Copy test set rows
