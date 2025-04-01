@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import os
 import sys
@@ -56,15 +57,22 @@ def train_model(grid_search=False):
 
         best_model = grid_search.best_estimator_
         y_pred = best_model.predict(X_test)
-    
+
     else:
         rf = RandomForestClassifier()
         rf.fit(X_train, y_train)
         y_pred = rf.predict(X_test)
 
+        lr=LogisticRegression()
+        lr.fit(X_train,y_train)
+        y_pred_lr=lr.predict(X_test)
+
     logging.info("saving model")
     with open(os.path.join(config.MODELS_PATH, "random_forest.pickle"),"wb") as file:
         pickle.dump(rf, file)
+    
+    with open(os.path.join(config.MODELS_PATH, "logistic_regression.pickle"),"wb") as file:
+        pickle.dump(lr, file)
 
 
     # Create a DataFrame for the test set with predictions
