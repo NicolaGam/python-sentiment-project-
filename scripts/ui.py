@@ -33,9 +33,8 @@ if st.button("Classify"):
             prediction = rf_model.predict(X)[0]
         else:
             prediction = lr_model.predict(X)[0]
-        
-        print(prediction)
-        
+    
+
         if prediction == 'positive':
             st.success(f"Predicted class: {prediction}")
         elif prediction == 'negative':
